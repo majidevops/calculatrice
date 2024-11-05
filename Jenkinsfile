@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    triggers {
+pollSCM('* * * * *')
+}
     stages {
         
         stage("Compilation") {
@@ -36,4 +39,11 @@ pipeline {
            }
         }
     }
+    post {
+always {
+mail to: 'majidlearning7@gmail.com',
+subject: "Notification de l'état de compilation est terminée: ${currentBuild.fullDisplayName}",
+body: " Votre build est accompli, Veuilez vérifier: ${env.BUILD_URL}"
+}
+}
 }
