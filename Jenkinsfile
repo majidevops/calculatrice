@@ -43,7 +43,7 @@ pollSCM('* * * * *')
 always {
 mail to: 'majidlearning7@gmail.com',
 subject: "Notification de l'état de compilation est terminée: ${currentBuild.fullDisplayName}",
-body: " Votre build est accompli, Veuilez vérifier: ${env.BUILD_URL}"
+body: " Votre build est accompli, Veuilez vérifieravec patience: ${env.BUILD_URL}"
 }
 }
 }
