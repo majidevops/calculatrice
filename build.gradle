@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.7'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco' // Application du plugin JaCoCo
 }
 
 group = 'com.chaffai'
@@ -27,3 +28,16 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+// Configuration de la vérification de la couverture de tests JaCoCo
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			limit {
+				minimum = 0.2 // Définit le seuil minimum de couverture à 20 %
+			}
+		}
+	}
+}
+// Assure que la vérification de la couverture est exécutée après les tests
+check.dependsOn jacocoTestCoverageVerification
+

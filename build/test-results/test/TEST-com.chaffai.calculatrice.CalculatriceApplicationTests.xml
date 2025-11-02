@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.chaffai.calculatrice.CalculatriceApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-11-01T09:06:47.778Z" hostname="master" time="1.033">
+<testsuite name="com.chaffai.calculatrice.CalculatriceApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-11-02T10:30:46.041Z" hostname="master" time="1.493">
   <properties/>
-  <testcase name="contextLoads()" classname="com.chaffai.calculatrice.CalculatriceApplicationTests" time="1.033"/>
-  <system-out><![CDATA[05:06:45.321 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.chaffai.calculatrice.CalculatriceApplicationTests]: CalculatriceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-05:06:45.497 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.chaffai.calculatrice.CalculatriceApplication for test class com.chaffai.calculatrice.CalculatriceApplicationTests
+  <testcase name="contextLoads()" classname="com.chaffai.calculatrice.CalculatriceApplicationTests" time="1.493"/>
+  <system-out><![CDATA[05:30:41.852 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.chaffai.calculatrice.CalculatriceApplicationTests]: CalculatriceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+05:30:42.230 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.chaffai.calculatrice.CalculatriceApplication for test class com.chaffai.calculatrice.CalculatriceApplicationTests
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -14,9 +14,9 @@
 
  :: Spring Boot ::                (v3.5.7)
 
-2025-11-01T05:06:46.257-04:00  INFO 24611 --- [calculatrice] [    Test worker] c.c.c.CalculatriceApplicationTests       : Starting CalculatriceApplicationTests using Java 21.0.8 with PID 24611 (started by mj in /home/mj/Desktop/Devops/ateliers/Jenkins/pipeline/calculatrice)
-2025-11-01T05:06:46.259-04:00  INFO 24611 --- [calculatrice] [    Test worker] c.c.c.CalculatriceApplicationTests       : No active profile set, falling back to 1 default profile: "default"
-2025-11-01T05:06:47.751-04:00  INFO 24611 --- [calculatrice] [    Test worker] c.c.c.CalculatriceApplicationTests       : Started CalculatriceApplicationTests in 1.987 seconds (process running for 3.652)
+2025-11-02T05:30:43.509-05:00  INFO 42579 --- [calculatrice] [    Test worker] c.c.c.CalculatriceApplicationTests       : Starting CalculatriceApplicationTests using Java 21.0.8 with PID 42579 (started by mj in /home/mj/Desktop/Devops/ateliers/Jenkins/pipeline/calculatrice)
+2025-11-02T05:30:43.513-05:00  INFO 42579 --- [calculatrice] [    Test worker] c.c.c.CalculatriceApplicationTests       : No active profile set, falling back to 1 default profile: "default"
+2025-11-02T05:30:45.990-05:00  INFO 42579 --- [calculatrice] [    Test worker] c.c.c.CalculatriceApplicationTests       : Started CalculatriceApplicationTests in 3.271 seconds (process running for 6.497)
 ]]></system-out>
   <system-err><![CDATA[Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
 WARNING: A Java agent has been loaded dynamically (/home/mj/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.17.8/f09415827a71be7ed621c7bd02550678f28bc81c/byte-buddy-agent-1.17.8.jar)
