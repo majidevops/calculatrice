@@ -36,6 +36,18 @@ pipeline {
                 sh './gradlew jacocoTestReport'
             }
         }
+        stage('Diagnostic') {
+    steps {
+        sh '''
+            echo "=== Structure des répertoires ==="
+            find . -name "*.exec" -o -name "jacoco*" | head -20
+            echo "=== Fichiers dans build/reports ==="
+            ls -la build/reports/ || echo "Aucun rapport"
+            echo "=== Fichiers jacoco ==="
+            ls -la build/jacoco/ || echo "Aucun fichier jacoco"
+        '''
+    }
+}
     }
     
     post {
