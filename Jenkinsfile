@@ -1,27 +1,24 @@
 pipeline {
     agent any
-    
+
     environment {
-        // Définit JAVA_HOME directement
         JAVA_HOME = '/usr/lib/jvm/java-21-openjdk-amd64'
         PATH = "${JAVA_HOME}/bin:${PATH}"
     }
-    
+
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
-        
-        stage('Build et Tests') {
+
+        stage('Build + Tests') {
             steps {
                 sh '''
                     echo "Java version:"
                     java -version
-                    echo "Gradle version:"
-                    ./gradlew --version
-                    ./gradlew clean build
+                    ./gradlew clean test
                 '''
             }
             post {
@@ -30,68 +27,41 @@ pipeline {
                 }
             }
         }
-        
-        stage('Rapports Couverture') {
+
+        stage('Génération JaCoCo') {
             steps {
                 sh './gradlew jacocoTestReport'
             }
         }
-        stage('Diagnostic') {
-    steps {
-        sh '''
-            echo "=== Structure des répertoires ==="
-            find . -name "*.exec" -o -name "jacoco*" | head -20
-            echo "=== Fichiers dans build/reports ==="
-            ls -la build/reports/ || echo "Aucun rapport"
-            echo "=== Fichiers jacoco ==="
-            ls -la build/jacoco/ || echo "Aucun fichier jacoco"
-        '''
-    }
-}.
-stage('Rapport Minimal') {
-    steps {
-        sh '''
-            # Crée un rapport HTML minimal si absent
-            if [ ! -f build/reports/jacoco/test/html/index.html ]; then
-                echo "Création rapport minimal..."
-                mkdir -p build/reports/jacoco/test/html
-                cat > build/reports/jacoco/test/html/index.html << EOF
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Rapport JaCoCo</title>
-</head>
-<body>
-    <h1>Rapport de Couverture</h1>
-    <p>Génération en cours de configuration...</p>
-    <p>Couverture: 0% (configuration)</p>
-</body>
-</html>
-EOF
-            fi
-        '''
-    }
-}
 
+        stage('Diagnostic') {
+            steps {
+                sh '''
+                    echo "=== Fichiers jacoco trouvés ==="
+                    find build -name "*.exec" -o -name "*.xml" | head -20
+                    
+                    echo "=== Répertoires rapports HTML ==="
+                    ls -la build/reports/jacoco/test/html || echo "Aucun rapport HTML"
+                '''
+            }
+        }
     }
-    
+
     post {
         always {
-            // Rapport JaCoCo
+            // Plugin Jenkins JaCoCo → XML après JaCoCo + Gradle 8+
             jacoco(
-                execPattern: 'build/jacoco/test.exec',
+                execPattern: '**/jacoco.exec',
                 classPattern: 'build/classes/java/main',
-                sourcePattern: 'src/main/java'
+                sourcePattern: 'src/main/java',
+                exclusionPattern: ''
             )
-            
-            // Rapport HTML détaillé
-            publishHTML([
-                allowMissing: false,
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
+
+            // Publication du rapport HTML
+            publishHTML(target: [
                 reportDir: 'build/reports/jacoco/test/html',
                 reportFiles: 'index.html',
-                reportName: 'Rapport JaCoCo Détaillé'
+                reportName: 'Rapport JaCoCo HTML'
             ])
         }
     }

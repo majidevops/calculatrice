@@ -21,50 +21,54 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.named('test') {
+// ✅ Active JUnit 5 + lance JaCoCo après test
+tasks.test {
     useJUnitPlatform()
-    finalizedBy jacocoTestReport // Toujours générer le rapport après les tests
+    finalizedBy tasks.jacocoTestReport
 }
 
-// Configuration JaCoCo
+// ✅ Version JaCoCo stable
 jacoco {
-    toolVersion = "0.8.11" // Version spécifique pour la stabilité
+    toolVersion = "0.8.12"
 }
 
-// Rapport de couverture
+// ✅ Rapport XML + HTML demandé par Jenkins
 jacocoTestReport {
-    dependsOn test // S'exécute après les tests
+    dependsOn test
     reports {
-        xml.required = true // ESSENTIEL pour Jenkins
-        html.required = true // Pour consultation manuelle
-        csv.required = false
+        xml.required = true
+        html.required = true
     }
-    
-    // Exclure les classes que vous ne voulez pas couvrir
-    afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.collect {
+
+    // ✅ Exclusions conformes Gradle 8+
+    classDirectories.setFrom(
+        files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
                 '**/config/**',
                 '**/entity/**',
                 '**/dto/**',
                 '**/exception/**',
-                '**/Application*' // Votre classe main Spring Boot
+                '**/Application*'
             ])
-        }))
-    }
+        })
+    )
 }
 
-// Vérification des seuils de couverture
+// ✅ Échec si couverture trop faible
 jacocoTestCoverageVerification {
     dependsOn jacocoTestReport
     violationRules {
         rule {
+            element = 'BUNDLE'
             limit {
-                minimum = 0.5 // 50% de couverture minimum
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.50  // 50% global
             }
         }
         rule {
@@ -73,11 +77,11 @@ jacocoTestCoverageVerification {
             limit {
                 counter = 'LINE'
                 value = 'COVEREDRATIO'
-                minimum = 0.3 // 30% par classe
+                minimum = 0.30   // min 30% par classe
             }
         }
     }
 }
 
-// S'assurer que la vérification est faite pendant le build
+// ✅ Le build échoue si couverture insuf.
 check.dependsOn jacocoTestCoverageVerification
