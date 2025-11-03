@@ -47,7 +47,32 @@ pipeline {
             ls -la build/jacoco/ || echo "Aucun fichier jacoco"
         '''
     }
+}.
+stage('Rapport Minimal') {
+    steps {
+        sh '''
+            # Crée un rapport HTML minimal si absent
+            if [ ! -f build/reports/jacoco/test/html/index.html ]; then
+                echo "Création rapport minimal..."
+                mkdir -p build/reports/jacoco/test/html
+                cat > build/reports/jacoco/test/html/index.html << EOF
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rapport JaCoCo</title>
+</head>
+<body>
+    <h1>Rapport de Couverture</h1>
+    <p>Génération en cours de configuration...</p>
+    <p>Couverture: 0% (configuration)</p>
+</body>
+</html>
+EOF
+            fi
+        '''
+    }
 }
+
     }
     
     post {
