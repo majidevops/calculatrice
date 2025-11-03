@@ -1,8 +1,8 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.5.7'
-	id 'io.spring.dependency-management' version '1.1.7'
-	id 'jacoco' // Application du plugin JaCoCo
+    id 'java'
+    id 'org.springframework.boot' version '3.5.7'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
 }
 
 group = 'com.chaffai'
@@ -10,34 +10,74 @@ version = '0.0.1-SNAPSHOT'
 description = 'Demo project for Spring Boot'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport // Toujours générer le rapport après les tests
 }
-// Configuration de la vérification de la couverture de tests JaCoCo
-jacocoTestCoverageVerification {
-	violationRules {
-		rule {
-			limit {
-				minimum = 0.2 // Définit le seuil minimum de couverture à 20 %
-			}
-		}
-	}
-}
-// Assure que la vérification de la couverture est exécutée après les tests
-check.dependsOn jacocoTestCoverageVerification
 
+// Configuration JaCoCo
+jacoco {
+    toolVersion = "0.8.11" // Version spécifique pour la stabilité
+}
+
+// Rapport de couverture
+jacocoTestReport {
+    dependsOn test // S'exécute après les tests
+    reports {
+        xml.required = true // ESSENTIEL pour Jenkins
+        html.required = true // Pour consultation manuelle
+        csv.required = false
+    }
+    
+    // Exclure les classes que vous ne voulez pas couvrir
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                '**/config/**',
+                '**/entity/**',
+                '**/dto/**',
+                '**/exception/**',
+                '**/Application*' // Votre classe main Spring Boot
+            ])
+        }))
+    }
+}
+
+// Vérification des seuils de couverture
+jacocoTestCoverageVerification {
+    dependsOn jacocoTestReport
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.5 // 50% de couverture minimum
+            }
+        }
+        rule {
+            element = 'CLASS'
+            includes = ['com.chaffai.*']
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.3 // 30% par classe
+            }
+        }
+    }
+}
+
+// S'assurer que la vérification est faite pendant le build
+check.dependsOn jacocoTestCoverageVerification
