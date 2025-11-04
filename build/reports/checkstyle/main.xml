@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="9.3">
+<file name="/home/mj/Desktop/Devops/ateliers/Jenkins/pipeline/calculatrice/src/main/java/com/chaffai/calculatrice/Calculatrice.java">
+</file>
+<file name="/home/mj/Desktop/Devops/ateliers/Jenkins/pipeline/calculatrice/src/main/java/com/chaffai/calculatrice/CalculatriceApplication.java">
+</file>
+<file name="/home/mj/Desktop/Devops/ateliers/Jenkins/pipeline/calculatrice/src/main/java/com/chaffai/calculatrice/CalculatriceController.java">
+</file>
+</checkstyle>
