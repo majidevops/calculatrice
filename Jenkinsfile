@@ -54,4 +54,11 @@ pipeline {
             }
         }
     }
+    post {
+always {
+mail to: 'majidlearning7@gmail.com',
+subject: "Notification de l'état de compilation est terminée: ${currentBuild.fullDisplayName}",
+body: " Votre build est accompli, Veuilez vérifier avec patience: ${env.BUILD_URL}"
+}
+}
 }
