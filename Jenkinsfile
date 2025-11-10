@@ -6,14 +6,7 @@ pipeline {
         PATH = "${JAVA_HOME}/bin:${PATH}"
     }
 
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Build + Tests') {
+           stage('Build + Tests') {
             steps {
                 sh '''
                     echo "Java version:"
