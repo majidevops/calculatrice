@@ -7,7 +7,11 @@ pipeline {
     }
 
     stages {
-        
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
 
         stage('Compilation') {
             steps {
@@ -19,50 +23,39 @@ pipeline {
             }
         }
 
-        stage('Tests') {
+        stage('Tests unitaires') {
             steps {
                 sh './gradlew test'
+                junit 'build/test-results/test/**/*.xml'
             }
-            post {
-                always {
-                    junit 'build/test-results/test/**/*.xml'
-                }
+        }
+
+        stage('Couverture du code') {
+            steps {
+                sh './gradlew jacocoTestReport'
+                jacoco(
+                    execPattern: '**/jacoco.exec',
+                    classPattern: 'build/classes/java/main',
+                    sourcePattern: 'src/main/java',
+                    exclusionPattern: ''
+                )
+                publishHTML(target: [
+                    reportDir: 'build/reports/jacoco/test/html',
+                    reportFiles: 'index.html',
+                    reportName: 'Rapport JaCoCo HTML'
+                ])
             }
         }
 
         stage('Analyse statique') {
             steps {
                 sh "./gradlew checkstyleMain"
+                publishHTML(target: [
+                    reportDir: 'build/reports/checkstyle/',
+                    reportFiles: 'main.html',
+                    reportName: 'Checkstyle Report'
+                ])
             }
-        }
-    }
-
-    post {
-        always {
-            // Génération rapport JaCoCo
-            sh './gradlew jacocoTestReport'
-            
-            // Publication rapport JaCoCo dans Jenkins
-            jacoco(
-                execPattern: '**/jacoco.exec',
-                classPattern: 'build/classes/java/main',
-                sourcePattern: 'src/main/java',
-                exclusionPattern: ''
-            )
-
-            // Publication rapport HTML JaCoCo
-            publishHTML(target: [
-                reportDir: 'build/reports/jacoco/test/html',
-                reportFiles: 'index.html',
-                reportName: 'Rapport JaCoCo HTML'
-            ])
-
-            // Publication rapport Checkstyle
-            publishHTML(target: [
-                reportDir: 'build/reports/checkstyle/',
-                reportFiles: 'main.html',
-                reportName: 'Checkstyle Report'
-            ])
         }
     }
 }
