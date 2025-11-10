@@ -6,13 +6,26 @@ pipeline {
         PATH = "${JAVA_HOME}/bin:${PATH}"
     }
 
-           stage('Build + Tests') {
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Compilation') {
             steps {
                 sh '''
                     echo "Java version:"
                     java -version
-                    ./gradlew clean test
+                    ./gradlew classes
                 '''
+            }
+        }
+
+        stage('Tests') {
+            steps {
+                sh './gradlew test'
             }
             post {
                 always {
@@ -21,26 +34,19 @@ pipeline {
             }
         }
 
-        stage('Génération JaCoCo') {
-            steps {
-                sh './gradlew jacocoTestReport'
-            }
-        }
-
-        stage("Analyse statique du code") {
+        stage('Analyse statique') {
             steps {
                 sh "./gradlew checkstyleMain"
-                publishHTML(target: [
-                    reportDir: 'build/reports/checkstyle/',
-                    reportFiles: 'main.html',
-                    reportName: "Checkstyle Report"
-                ])
             }
         }
     }
 
     post {
         always {
+            // Génération rapport JaCoCo
+            sh './gradlew jacocoTestReport'
+            
+            // Publication rapport JaCoCo dans Jenkins
             jacoco(
                 execPattern: '**/jacoco.exec',
                 classPattern: 'build/classes/java/main',
@@ -48,10 +54,18 @@ pipeline {
                 exclusionPattern: ''
             )
 
+            // Publication rapport HTML JaCoCo
             publishHTML(target: [
                 reportDir: 'build/reports/jacoco/test/html',
                 reportFiles: 'index.html',
                 reportName: 'Rapport JaCoCo HTML'
+            ])
+
+            // Publication rapport Checkstyle
+            publishHTML(target: [
+                reportDir: 'build/reports/checkstyle/',
+                reportFiles: 'main.html',
+                reportName: 'Checkstyle Report'
             ])
         }
     }
