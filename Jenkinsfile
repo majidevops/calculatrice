@@ -34,32 +34,20 @@ pipeline {
             }
         }
 
-        stage('Diagnostic') {
-            steps {
-                sh '''
-                    echo "=== Fichiers jacoco trouvés ==="
-                    find build -name "*.exec" -o -name "*.xml" | head -20
-                    
-                    echo "=== Répertoires rapports HTML ==="
-                    ls -la build/reports/jacoco/test/html || echo "Aucun rapport HTML"
-                '''
-            }
-        }
         stage("Analyse statique du code") {
-      steps {
-           sh "./gradlew checkstyleMain"
-           publishHTML (target: [
-           reportDir: 'build/reports/checkstyle/',
-           reportFiles: 'main.html',
-           reportName: "Checkstyle Report"
-])
-           }
+            steps {
+                sh "./gradlew checkstyleMain"
+                publishHTML(target: [
+                    reportDir: 'build/reports/checkstyle/',
+                    reportFiles: 'main.html',
+                    reportName: "Checkstyle Report"
+                ])
+            }
         }
     }
 
     post {
         always {
-            // Plugin Jenkins JaCoCo → XML après JaCoCo + Gradle 8+
             jacoco(
                 execPattern: '**/jacoco.exec',
                 classPattern: 'build/classes/java/main',
@@ -67,7 +55,6 @@ pipeline {
                 exclusionPattern: ''
             )
 
-            // Publication du rapport HTML
             publishHTML(target: [
                 reportDir: 'build/reports/jacoco/test/html',
                 reportFiles: 'index.html',
